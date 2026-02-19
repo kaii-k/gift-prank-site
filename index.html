@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🎁 Special Gift 🎁</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            margin-top: 15%;
+            background-color: #111;
+            color: white;
+        }
+
+        h1 {
+            font-size: 45px;
+        }
+
+        button {
+            font-size: 25px;
+            padding: 15px 40px;
+            margin: 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        #yes { background-color: green; color: white; }
+        #no  { background-color: red; color: white; }
+    </style>
+</head>
+
+<body>
+
+<h1>🎁 Will you accept the gift? 🎁</h1>
+
+<button onclick="boom()">YES</button>
+<button onclick="boom()">NO</button>
+
+<script>
+let audioCtx;
+let oscillator;
+let gainNode;
+let started = false;
+
+function boom() {
+    if (started) return;
+    started = true;
+
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    oscillator = audioCtx.createOscillator();
+    gainNode  = audioCtx.createGain();
+
+    // HORROR SOUND SETTINGS
+    oscillator.type = "sawtooth";   // harsh sound
+    oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+
+    // Siren effect (up-down frequency)
+    oscillator.frequency.exponentialRampToValueAtTime(
+        1200,
+        audioCtx.currentTime + 0.8
+    );
+
+    gainNode.gain.setValueAtTime(0.9, audioCtx.currentTime); // LOUD
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+
+    oscillator.start();
+
+    // Loop the siren movement
+    setInterval(() => {
+        oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(
+            1200,
+            audioCtx.currentTime + 0.8
+        );
+    }, 800);
+
+    // Visual terror
+    document.body.style.backgroundColor = "red";
+    document.body.innerHTML = `
+        <h1 style="font-size:70px;">💀 TOO LATE 💀</h1>
+        <p style="font-size:28px;">You should not have clicked.</p>
+    `;
+}
+</script>
+
+</body>
+</html>
